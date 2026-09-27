@@ -21,6 +21,21 @@ const bebasNeue = Bebas_Neue({
 export const metadata: Metadata = {
   title: "استودیو رما | RAMA STUDIO",
   description: "استودیو بازی‌سازی و تولید محتوای دیجیتال — بازی، هنر سه‌بعدی و تجربه‌های تعاملی",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
+  icons: {
+    icon: [{ url: "/logo/rama.svg", type: "image/svg+xml" }],
+    shortcut: "/logo/rama.svg",
+    apple: "/logo/rama.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

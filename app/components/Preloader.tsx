@@ -29,12 +29,15 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         },
         onComplete: () => {
           const tl = gsap.timeline({ onComplete: onDone });
-          tl.to(".pre-fade", { opacity: 0, y: -18, duration: 0.6, stagger: 0.05, ease: "power3.in" })
-            .to(root.current, {
+          tl.to(".pre-fade", { opacity: 0, y: -18, duration: 0.6, stagger: 0.05, ease: "power3.in" }).to(
+            root.current,
+            {
               clipPath: "inset(0 0 100% 0)",
               duration: 1.1,
               ease: "power4.inOut",
-            }, "-=0.15");
+            },
+            "-=0.15",
+          );
         },
       });
     }, root);
@@ -56,7 +59,10 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         <span className="h-px w-10 bg-gold/60" />
       </div>
 
-      <h1 className="pre-fade mt-6 flex gap-5 overflow-hidden font-display-fa text-[clamp(3rem,10vw,7rem)] leading-none text-bone" dir="rtl">
+      <h1
+        className="pre-fade mt-6 flex gap-5 overflow-hidden font-display-fa text-[clamp(3rem,10vw,7rem)] leading-none text-bone"
+        dir="rtl"
+      >
         {["استودیو", "رما"].map((word, i) => (
           <span key={i} className="pre-letter inline-block translate-y-full opacity-0">
             {word}
@@ -65,7 +71,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
       </h1>
 
       <p className="pre-fade mt-4 text-sm font-light text-ash" dir="rtl">
-        در حال آماده‌سازی تجربه سینمایی…
+        صبور باشید...
       </p>
 
       {/* progress */}
@@ -77,10 +83,16 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
           </span>
         </div>
         <div className="mt-3 h-px w-full overflow-hidden bg-white/10">
-          <div ref={bar} className="h-full w-full origin-left bg-gradient-to-r from-gold-deep via-gold to-ember" style={{ transform: "scaleX(0)" }} />
+          <div
+            ref={bar}
+            className="h-full w-full origin-left bg-gradient-to-r from-gold-deep via-gold to-ember"
+            style={{ transform: "scaleX(0)" }}
+          />
         </div>
         <div className="mt-3 flex justify-between text-[10px] tracking-widest text-white/30 font-grotesk">
-          <span>GAME</span><span>3D ART</span><span>WORLDS</span>
+          <span>GAME</span>
+          <span>3D ART</span>
+          <span>WORLDS</span>
         </div>
       </div>
     </div>
