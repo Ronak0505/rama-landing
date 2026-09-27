@@ -1,7 +1,9 @@
+"use client";
+
 import { useLayoutEffect, useRef } from "react";
 import { gsap, isReducedMotion } from "../lib/anim";
 
-export default function Divider({ text, outline = false }: { text: string; outline?: boolean }) {
+export default function Divider({ text, secText, outline = false }: { text: string; secText: string; outline?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -24,7 +26,7 @@ export default function Divider({ text, outline = false }: { text: string; outli
       <div className="dv-inner whitespace-nowrap text-center font-bebas text-[clamp(2.5rem,7vw,5.5rem)] tracking-[0.12em]">
         <span className={outline ? "text-stroke-faint" : "text-white/[0.07]"}>{text}</span>
         <span className="mx-6 text-gold/40">•</span>
-        <span className={outline ? "text-stroke-gold" : "text-white/[0.07]"}>{text}</span>
+        <span className={outline ? "text-stroke-gold" : "text-white/[0.07]"}>{secText}</span>
       </div>
       <div className="dv-line mx-auto mt-2 h-px w-2/3 bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
     </div>

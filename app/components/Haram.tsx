@@ -1,3 +1,5 @@
+"use client";
+
 import { useLayoutEffect, useRef } from "react";
 import { Landmark, Scan, Box, Sparkles, MonitorPlay } from "lucide-react";
 import { gsap, isReducedMotion } from "../lib/anim";
@@ -96,7 +98,7 @@ export default function Haram() {
           </div>
 
           {/* vertical timeline */}
-          <div className="relative rounded-3xl border border-white/10 bg-black/50 p-8 backdrop-blur-2xl">
+          <div id="timeline" className="relative rounded-3xl border border-white/10 bg-black/50 p-8 backdrop-blur-2xl">
             <div className="font-grotesk text-[10px] tracking-[0.4em] text-ash" dir="ltr">PRODUCTION TIMELINE</div>
             <div className="absolute bottom-8 right-[52px] top-24 w-px bg-white/10">
               <div className="hr-progress h-full w-full origin-top bg-gradient-to-b from-amber-200 to-ember" />

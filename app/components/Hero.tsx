@@ -1,8 +1,13 @@
+"use client";
+
 import { useLayoutEffect, useRef } from "react";
+import Link from "next/link";
 import { Play, LayoutGrid, ChevronDown } from "lucide-react";
 import { gsap, isReducedMotion, scrollToSection } from "../lib/anim";
+import { useLandingStarted } from "../lib/landing-context";
 
-export default function Hero({ started }: { started: boolean }) {
+export default function Hero() {
+  const started = useLandingStarted();
   const root = useRef<HTMLElement>(null);
   const tlIntro = useRef<gsap.core.Timeline | null>(null);
 
@@ -134,13 +139,13 @@ export default function Hero({ started }: { started: boolean }) {
             معرفی بازی
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-l from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
           </button>
-          <button
-            onClick={() => scrollToSection("#studio")}
+          <Link
+            href="/"
             className="hero-cta group flex items-center gap-3 rounded-full border border-white/20 bg-white/5 px-9 py-4 text-sm font-semibold text-bone backdrop-blur-md transition hover:border-gold/60 hover:bg-white/10"
           >
             <LayoutGrid size={17} className="text-gold" />
-            مشاهده پروژه‌های استودیو
-          </button>
+            استودیو رما
+          </Link>
         </div>
 
         {/* mini stats */}
