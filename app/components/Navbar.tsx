@@ -47,9 +47,25 @@ export default function Navbar({ visible, variant = "studio" }: { visible: boole
   const bar = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
+    let raf = 0;
+    let last = window.scrollY > 60;
+    setScrolled(last);
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const next = window.scrollY > 60;
+        if (next !== last) {
+          last = next;
+          setScrolled(next);
+        }
+      });
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   useEffect(() => {
@@ -158,7 +174,7 @@ export default function Navbar({ visible, variant = "studio" }: { visible: boole
             className="font-bebas text-2xl tracking-[0.2em] text-gold"
             dir="ltr"
           >
-            REMA
+            RAMA
           </Link>
           <button
             onClick={() => setOpen(false)}
@@ -187,7 +203,7 @@ export default function Navbar({ visible, variant = "studio" }: { visible: boole
           ))}
         </nav>
         <p className="pb-8 text-center font-grotesk text-[10px] tracking-[0.4em] text-white/30" dir="ltr">
-          REMA STUDIO — 2026
+          RAMA STUDIO — 2026
         </p>
       </div>
     </>

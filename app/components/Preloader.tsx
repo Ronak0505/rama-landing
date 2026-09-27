@@ -52,7 +52,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
 
       <div className="pre-fade flex items-center gap-3 text-[11px] tracking-[0.5em] text-ash font-grotesk" dir="ltr">
         <span className="h-px w-10 bg-gold/60" />
-        REMA STUDIO
+        RAMA STUDIO
         <span className="h-px w-10 bg-gold/60" />
       </div>
 

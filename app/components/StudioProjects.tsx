@@ -49,7 +49,7 @@ export default function StudioProjects() {
           opacity: 1,
           duration: 1,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".sp-head", start: "top 88%" },
+          scrollTrigger: { trigger: ".sp-head", start: "top 88%", once: true },
         },
       );
       gsap.fromTo(
@@ -63,7 +63,7 @@ export default function StudioProjects() {
           stagger: 0.14,
           ease: "power3.out",
           force3D: true,
-          scrollTrigger: { trigger: ".sp-grid", start: "top 86%" },
+          scrollTrigger: { trigger: ".sp-grid", start: "top 86%", once: true },
         },
       );
     }, root);

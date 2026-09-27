@@ -19,7 +19,7 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: "استودیو رما | REMA Studio",
+  title: "استودیو رما | RAMA STUDIO",
   description: "استودیو بازی‌سازی و تولید محتوای دیجیتال — بازی، هنر سه‌بعدی و تجربه‌های تعاملی",
 };
 

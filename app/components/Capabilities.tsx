@@ -50,7 +50,7 @@ export default function Capabilities() {
           opacity: 1,
           duration: 1.2,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".cp-head", start: "top 86%" },
+          scrollTrigger: { trigger: ".cp-head", start: "top 86%", once: true },
         },
       );
       gsap.fromTo(
@@ -62,7 +62,7 @@ export default function Capabilities() {
           duration: 1,
           stagger: 0.12,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".cp-list", start: "top 82%" },
+          scrollTrigger: { trigger: ".cp-list", start: "top 82%", once: true },
         },
       );
       gsap.fromTo(
@@ -73,7 +73,7 @@ export default function Capabilities() {
           opacity: 1,
           duration: 1.4,
           ease: "power3.out",
-          scrollTrigger: { trigger: ".cp-preview", start: "top 85%" },
+          scrollTrigger: { trigger: ".cp-preview", start: "top 85%", once: true },
         },
       );
     }, root);
@@ -152,7 +152,7 @@ export default function Capabilities() {
                 src={c.img}
                 alt={c.fa}
                 loading="lazy"
-                className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ${
+                className={`absolute inset-0 h-full w-full object-cover transform-gpu transition-[transform,opacity] duration-700 ${
                   active === i ? "scale-100 opacity-100" : "scale-110 opacity-0"
                 }`}
               />

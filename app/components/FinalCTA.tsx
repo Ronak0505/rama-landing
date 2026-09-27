@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft, Mail, Play, Landmark } from "lucide-react";
-import { gsap, isReducedMotion, scrollToSection } from "../lib/anim";
+import { gsap, isReducedMotion, prefersScrollScrub, scrollToSection } from "../lib/anim";
 
 type FinalCTAProps = {
   variant?: "studio" | "game" | "haram";
@@ -44,15 +44,24 @@ export default function FinalCTA({ variant = "studio" }: FinalCTAProps) {
   useLayoutEffect(() => {
     if (!root.current || isReducedMotion()) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".fc-bg",
-        { scale: 1.22 },
-        {
-          scale: 1.02,
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 1.2 },
-        },
-      );
+      if (prefersScrollScrub()) {
+        gsap.fromTo(
+          ".fc-bg",
+          { scale: 1.22, force3D: true },
+          {
+            scale: 1.02,
+            ease: "none",
+            scrollTrigger: {
+              trigger: root.current,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1,
+              fastScrollEnd: true,
+              invalidateOnRefresh: false,
+            },
+          },
+        );
+      }
       gsap.fromTo(
         ".fc-title span",
         { yPercent: 115 },
@@ -61,7 +70,7 @@ export default function FinalCTA({ variant = "studio" }: FinalCTAProps) {
           duration: 1.3,
           stagger: 0.12,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".fc-title", start: "top 82%" },
+          scrollTrigger: { trigger: ".fc-title", start: "top 82%", once: true },
         },
       );
       gsap.fromTo(
@@ -73,7 +82,7 @@ export default function FinalCTA({ variant = "studio" }: FinalCTAProps) {
           duration: 1,
           stagger: 0.12,
           ease: "power3.out",
-          scrollTrigger: { trigger: ".fc-fades", start: "top 85%" },
+          scrollTrigger: { trigger: ".fc-fades", start: "top 85%", once: true },
         },
       );
       gsap.fromTo(
@@ -81,8 +90,9 @@ export default function FinalCTA({ variant = "studio" }: FinalCTAProps) {
         { clipPath: "inset(6% 4% 6% 4%)" },
         {
           clipPath: "inset(0% 0% 0% 0%)",
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top 80%", end: "top 20%", scrub: 1 },
+          duration: 1.4,
+          ease: "power2.out",
+          scrollTrigger: { trigger: root.current, start: "top 78%", toggleActions: "play none none none" },
         },
       );
     }, root);

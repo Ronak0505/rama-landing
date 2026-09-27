@@ -1,3 +1,5 @@
+"use client";
+
 import { useLayoutEffect, useRef } from "react";
 import { Crosshair, Mountain, Boxes, Palette, Gamepad2, Smartphone, ChevronLeft } from "lucide-react";
 import { gsap, isReducedMotion, scrollToSection } from "../lib/anim";
@@ -16,6 +18,8 @@ export default function FeaturedProject() {
     if (!root.current || isReducedMotion()) return;
     const mm = gsap.matchMedia();
     mm.add("(min-width: 768px)", () => {
+      gsap.set([".fp-bg", ".fp-bg-wrap", ".fp-p1", ".fp-p2", ".fp-card"], { force3D: true });
+
       const tl = gsap.timeline({
         defaults: { ease: "power2.out" },
         scrollTrigger: {
@@ -23,29 +27,33 @@ export default function FeaturedProject() {
           start: "top top",
           end: "+=380%",
           pin: true,
-          scrub: 1.1,
+          scrub: 1,
+          fastScrollEnd: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: false,
         },
       });
 
-      // bg slow zoom out across whole journey
       tl.fromTo(".fp-bg", { scale: 1.28 }, { scale: 1.02, duration: 10, ease: "none" }, 0);
-      // phase 1 — title in then out
       tl.fromTo(".fp-p1-kicker", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, 0.2)
         .fromTo(".fp-p1-title", { yPercent: 110 }, { yPercent: 0, duration: 1.4, stagger: 0.1 }, 0.3)
         .fromTo(".fp-p1-sub", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, 0.9)
-        .to(".fp-p1", { yPercent: -22, opacity: 0, filter: "blur(8px)", duration: 1.2, ease: "power2.in" }, 2.6);
+        .to(".fp-p1", { yPercent: -26, opacity: 0, duration: 1.2, ease: "power2.in" }, 2.6);
 
-      // phase 2 — split: bg shifts, panel enters
       tl.to(".fp-bg-wrap", { xPercent: 24, scale: 0.92, duration: 1.6, ease: "power3.inOut" }, 3.2)
         .fromTo(".fp-shade", { opacity: 0.55 }, { opacity: 0.82, duration: 1.6 }, 3.2)
         .fromTo(".fp-p2", { xPercent: -12, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 1.4 }, 3.4)
         .fromTo(".fp-feat", { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.12 }, 3.8)
-        .to(".fp-p2", { xPercent: 8, opacity: 0, filter: "blur(6px)", duration: 1 }, 6.2)
+        .to(".fp-p2", { xPercent: 10, opacity: 0, duration: 1 }, 6.2)
         .to(".fp-bg-wrap", { xPercent: 0, scale: 1, duration: 1.4, ease: "power3.inOut" }, 6.2);
 
-      // phase 3 — layered gallery
       tl.fromTo(".fp-p3-head", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, 6.6)
-        .fromTo(".fp-card", { y: 140, opacity: 0, rotate: 2 }, { y: 0, opacity: 1, rotate: 0, duration: 1.1, stagger: 0.18 }, 6.9)
+        .fromTo(
+          ".fp-card",
+          { y: 140, opacity: 0, rotate: 2 },
+          { y: 0, opacity: 1, rotate: 0, duration: 1.1, stagger: 0.18 },
+          6.9,
+        )
         .to(".fp-progress-fill", { scaleX: 1, duration: 10, ease: "none" }, 0);
 
       // HUD step indicator
@@ -63,8 +71,14 @@ export default function FeaturedProject() {
       {/* ============ DESKTOP PINNED CINEMATIC ============ */}
       <div className="fp-wrap relative hidden h-screen overflow-hidden md:block cinematic-grain" dir="ltr">
         {/* bg */}
-        <div className="fp-bg-wrap absolute inset-0 will-change-transform">
-          <img src="/images/game-night.jpg" alt="نبرد هرمز" className="fp-bg h-full w-full object-cover will-change-transform" loading="lazy" />
+        <div className="fp-bg-wrap absolute inset-0 transform-gpu">
+          <img
+            src="/images/game-night.jpg"
+            alt="نبرد هرمز"
+            className="fp-bg h-full w-full object-cover transform-gpu"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div className="fp-shade absolute inset-0 bg-void/55" />
         <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-void/70" />
@@ -92,7 +106,7 @@ export default function FeaturedProject() {
             <Crosshair size={14} className="text-gold" />
             <span className="text-xs text-gold">مهم‌ترین پروژه استودیو</span>
           </div>
-          <h2 className="mt-6 overflow-hidden font-display-fa text-[clamp(4rem,11vw,10rem)] leading-none text-bone">
+          <h2 className="mt-6 overflow-hidden font-display-fa text-[clamp(4rem,11vw,10rem)] leading-none text-bone h-[202px]">
             <span className="fp-p1-title block">نبرد هرمز</span>
           </h2>
           <div className="overflow-hidden">
@@ -105,7 +119,7 @@ export default function FeaturedProject() {
 
         {/* PHASE 2 — info panel */}
         <div className="absolute inset-0 z-10 flex items-center px-10" dir="rtl">
-          <div className="fp-p2 w-[440px] max-w-[42vw] rounded-3xl border border-white/10 bg-black/60 p-9 opacity-0 backdrop-blur-2xl">
+          <div className="mr-16 fp-p2 w-[440px] max-w-[42vw] rounded-3xl border border-white/10 bg-black/60 p-9 opacity-0 backdrop-blur-2xl">
             <div className="font-grotesk text-[10px] tracking-[0.4em] text-gold" dir="ltr">PRODUCTION FOCUS</div>
             <h3 className="mt-3 font-display-fa text-4xl text-bone">فرآیند تولید</h3>
             <p className="mt-4 text-sm font-light leading-8 text-white/65">
@@ -133,12 +147,18 @@ export default function FeaturedProject() {
           </div>
           <div className="flex items-end justify-center gap-5 px-10" dir="ltr">
             {[
-              { src: "/images/game-coast.jpg", t: "ساحل هرمز", h: "h-56" },
-              { src: "/images/game-strike.jpg", t: "شب عملیات", h: "h-72" },
-              { src: "/images/game-fleet.jpg", t: "ناوگان", h: "h-56" },
+              { src: "/gallery/battle-of-hormoz-1.jpg", t: "ساحل هرمز", h: "h-56" },
+              { src: "/gallery/battle-of-hormoz-2.jpg", t: "شب عملیات", h: "h-72" },
+              { src: "/gallery/battle-of-hormoz-3.jpg", t: "ناوگان", h: "h-56" },
             ].map((c) => (
               <div key={c.t} className={`fp-card group relative w-[300px] overflow-hidden rounded-2xl border border-white/12 opacity-0 shadow-2xl ${c.h}`}>
-                <img src={c.src} alt={c.t} className="h-full w-full object-cover transition duration-700 group-hover:scale-110" loading="lazy" />
+                <img
+                  src={c.src}
+                  alt={c.t}
+                  className="h-full w-full object-cover transform-gpu transition duration-700 group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 <div className="absolute bottom-4 right-4 text-sm font-semibold" dir="rtl">{c.t}</div>
               </div>

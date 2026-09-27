@@ -22,7 +22,7 @@ export default function GlobalMarkets() {
           opacity: 1,
           duration: 1.1,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".gm-head", start: "top 86%" },
+          scrollTrigger: { trigger: ".gm-head", start: "top 86%", once: true },
         },
       );
       gsap.fromTo(
@@ -35,7 +35,7 @@ export default function GlobalMarkets() {
           duration: 1,
           stagger: 0.16,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".gm-grid", start: "top 85%" },
+          scrollTrigger: { trigger: ".gm-grid", start: "top 85%", once: true },
         },
       );
       gsap.fromTo(
@@ -45,7 +45,7 @@ export default function GlobalMarkets() {
           scaleX: 1,
           duration: 1.6,
           ease: "power3.inOut",
-          scrollTrigger: { trigger: ".gm-grid", start: "top 80%" },
+          scrollTrigger: { trigger: ".gm-grid", start: "top 80%", once: true },
         },
       );
     }, root);
@@ -78,7 +78,7 @@ export default function GlobalMarkets() {
       <div className="relative mx-auto max-w-[1200px] px-5 md:px-10">
         <div className="gm-head text-center">
           <h2
-            className="mt-5 font-bebas text-[clamp(2.2rem,5.5vw,4rem)] leading-tight tracking-[0.06em] flex flex-col text-5xl! gap-y-5"
+            className="mt-5  text-[clamp(2.2rem,5.5vw,4rem)] leading-tight tracking-[0.06em] flex flex-col text-5xl! gap-y-5"
             dir="ltr"
           >
             از تهران تا مارکت جهانی{" "}
@@ -102,10 +102,10 @@ export default function GlobalMarkets() {
               <div className="mt-3 font-bebas text-5xl tracking-[0.1em] text-bone transition group-hover:text-gold">
                 {m.name}
               </div>
-              <p className="mt-3 text-[12px] font-light leading-6 text-ash" dir="rtl">
+              <p className="mt-3 text-[12px]  leading-6 text-ash" dir="rtl">
                 {m.desc}
               </p>
-              <div className="mt-5 flex items-center justify-center gap-1.5 font-grotesk text-[10px] tracking-[0.3em] text-bone transition group-hover:text-gold">
+              <div className="mt-5 flex items-center justify-center gap-1.5 text-[10px] tracking-[0.3em] text-bone transition group-hover:text-gold">
                 <ArrowUpLeft size={12} /> بازدید از مارکت
               </div>
             </div>

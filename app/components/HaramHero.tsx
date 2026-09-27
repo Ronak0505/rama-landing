@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { Landmark, ChevronDown, ArrowLeft } from "lucide-react";
-import { gsap, isReducedMotion, scrollToSection } from "../lib/anim";
+import { gsap, isReducedMotion, prefersScrollScrub, scrollToSection } from "../lib/anim";
 import { useLandingStarted } from "../lib/landing-context";
 
 function whenHeroImageReady(img: HTMLImageElement | null): Promise<void> {
@@ -93,15 +93,22 @@ export default function HaramHero() {
     };
 
     const setupScrollParallax = () => {
-      if (cancelled || !root.current || isReducedMotion()) return;
+      if (cancelled || !root.current || !prefersScrollScrub()) return;
 
       scrollCtxRef.current?.revert();
       scrollCtxRef.current = gsap.context(() => {
-        if (bgParallax.current) gsap.set(bgParallax.current, { willChange: "transform" });
-        if (content.current) gsap.set(content.current, { willChange: "transform,opacity" });
+        if (bgParallax.current) gsap.set(bgParallax.current, { willChange: "transform", force3D: true });
+        if (content.current) gsap.set(content.current, { willChange: "transform,opacity", force3D: true });
 
         gsap.timeline({
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: 0.85 },
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+            fastScrollEnd: true,
+            invalidateOnRefresh: false,
+          },
         })
           .fromTo(
             bgParallax.current,
@@ -111,8 +118,8 @@ export default function HaramHero() {
           )
           .fromTo(
             content.current,
-            { yPercent: 0, opacity: 1, scale: 1, force3D: true },
-            { yPercent: -16, opacity: 0, scale: 0.985, ease: "none", duration: 0.65 },
+            { yPercent: 0, opacity: 1, force3D: true },
+            { yPercent: -16, opacity: 0, ease: "none", duration: 0.65 },
             0,
           )
           .fromTo(scrollHint.current, { opacity: 1, y: 0 }, { opacity: 0, y: 24, ease: "none", duration: 0.28 }, 0);
@@ -170,7 +177,7 @@ export default function HaramHero() {
           </span>
         </div>
 
-        <h1 className="mt-6 overflow-hidden font-display-fa text-[clamp(2.8rem,10vw,7.5rem)] leading-[1.05] text-bone drop-shadow-[0_10px_60px_rgba(0,0,0,0.8)]">
+        <h1 className="h-[250px] mt-6 overflow-hidden font-display-fa text-[clamp(2.8rem,8vw,6rem)] leading-[1.05] text-bone drop-shadow-[0_10px_60px_rgba(0,0,0,0.8)]">
           <span className="hh-reveal block">بازسازی سه‌بعدی</span>
           <span className="hh-reveal block">
             حرم مطهر امام حسین <span className="text-amber-200">(ع)</span>

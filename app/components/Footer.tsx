@@ -114,11 +114,11 @@ export default function Footer({ variant = "studio" }: { variant?: NavbarVariant
               </button>
             </div>
             <a
-              href="mailto:hello@remastudio.com"
+              href="mailto:hello@ramastudio.com"
               className="font-mono text-[11px] tracking-wide text-white/35 transition hover:text-gold"
               dir="ltr"
             >
-              hello@remastudio.com
+              hello@ramastudio.com
             </a>
           </div>
         </div>

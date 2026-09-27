@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { Layers, ChevronDown, ArrowLeft } from "lucide-react";
-import { gsap, isReducedMotion, scrollToSection } from "../lib/anim";
+import { gsap, isReducedMotion, prefersScrollScrub, scrollToSection } from "../lib/anim";
 import { useLandingStarted } from "../lib/landing-context";
 
 function whenHeroImageReady(img: HTMLImageElement | null): Promise<void> {
@@ -98,19 +98,21 @@ export default function StudioHero() {
     };
 
     const setupScrollParallax = () => {
-      if (cancelled || !root.current || isReducedMotion()) return;
+      if (cancelled || !root.current || !prefersScrollScrub()) return;
 
       scrollCtxRef.current?.revert();
       scrollCtxRef.current = gsap.context(() => {
-        if (bgParallax.current) gsap.set(bgParallax.current, { willChange: "transform" });
-        if (content.current) gsap.set(content.current, { willChange: "transform,opacity" });
+        if (bgParallax.current) gsap.set(bgParallax.current, { willChange: "transform", force3D: true });
+        if (content.current) gsap.set(content.current, { willChange: "transform,opacity", force3D: true });
 
         gsap.timeline({
           scrollTrigger: {
             trigger: root.current,
             start: "top top",
             end: "bottom top",
-            scrub: 0.85,
+            scrub: 1,
+            fastScrollEnd: true,
+            invalidateOnRefresh: false,
           },
         })
           .fromTo(
@@ -121,8 +123,8 @@ export default function StudioHero() {
           )
           .fromTo(
             content.current,
-            { yPercent: 0, opacity: 1, scale: 1, force3D: true },
-            { yPercent: -16, opacity: 0, scale: 0.985, ease: "none", duration: 0.65 },
+            { yPercent: 0, opacity: 1, force3D: true },
+            { yPercent: -16, opacity: 0, ease: "none", duration: 0.65 },
             0,
           )
           .fromTo(scrollHint.current, { opacity: 1, y: 0 }, { opacity: 0, y: 24, ease: "none", duration: 0.28 }, 0);

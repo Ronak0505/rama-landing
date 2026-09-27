@@ -18,6 +18,8 @@ export default function Haram() {
     if (!root.current || isReducedMotion()) return;
     const mm = gsap.matchMedia();
     mm.add("(min-width: 768px)", () => {
+      gsap.set([".hr-img-1", ".hr-img-2"], { force3D: true, transformOrigin: "center center" });
+
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
@@ -25,24 +27,28 @@ export default function Haram() {
           start: "top top",
           end: "+=280%",
           pin: true,
-          scrub: 1.1,
+          scrub: 1,
+          fastScrollEnd: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: false,
         },
       });
-      tl.fromTo(".hr-img-1", { scale: 1.3, filter: "blur(18px) brightness(0.5)" },
-        { scale: 1.05, filter: "blur(0px) brightness(1)", duration: 3 }, 0)
+
+      tl.fromTo(
+        ".hr-img-1",
+        { scale: 1.28, opacity: 0.72 },
+        { scale: 1.05, opacity: 1, duration: 3 },
+        0,
+      )
         .fromTo(".hr-shade", { opacity: 0.88 }, { opacity: 0.35, duration: 3 }, 0)
         .fromTo(".hr-kicker", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, 0.4)
         .fromTo(".hr-title span", { yPercent: 110 }, { yPercent: 0, duration: 1.2, stagger: 0.1 }, 0.6)
         .fromTo(".hr-desc", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, 1.2)
-        // floating info enters
         .fromTo(".hr-card", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, stagger: 0.25 }, 1.6)
-        // timeline draws
         .fromTo(".hr-progress", { scaleY: 0 }, { scaleY: 1, duration: 4.5, ease: "none" }, 1)
         .fromTo(".hr-step", { x: 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, stagger: 0.7 }, 1.4)
-        // camera pushes into interior
-        .to(".hr-img-1", { scale: 1.18, opacity: 0, duration: 1.6, ease: "power2.in" }, 4.2)
-        .fromTo(".hr-img-2", { scale: 1.25, opacity: 0, filter: "blur(12px)" },
-          { scale: 1.05, opacity: 1, filter: "blur(0px)", duration: 1.8 }, 4.4)
+        .fromTo(".hr-img-2", { scale: 1.18, opacity: 0 }, { scale: 1.05, opacity: 1, duration: 1.8, ease: "power2.out" }, 4.15)
+        .to(".hr-img-1", { scale: 1.14, opacity: 0, duration: 1.5, ease: "power2.in" }, 4.2)
         .to(".hr-phase-tag", { opacity: 0, duration: 0.4 }, 4.2)
         .fromTo(".hr-phase-tag-2", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.8 }, 4.8);
     });
@@ -53,9 +59,21 @@ export default function Haram() {
     <section ref={root} id="haram" className="relative bg-coal">
       {/* desktop pinned */}
       <div className="hr-wrap relative hidden h-screen overflow-hidden md:block cinematic-grain">
-        <div className="absolute inset-0">
-          <img src="/images/haram-night.jpg" alt="بین‌الحرمین" className="hr-img-1 absolute inset-0 h-full w-full object-cover will-change-transform" loading="lazy" />
-          <img src="/images/haram-interior.jpg" alt="حرم مطهر" className="hr-img-2 absolute inset-0 h-full w-full object-cover opacity-0 will-change-transform" loading="lazy" />
+        <div className="absolute inset-0 transform-gpu">
+          <img
+            src="/images/haram-night.jpg"
+            alt="بین‌الحرمین"
+            className="hr-img-1 absolute inset-0 h-full w-full object-cover transform-gpu"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            src="/images/haram-interior.jpg"
+            alt="حرم مطهر"
+            className="hr-img-2 absolute inset-0 h-full w-full object-cover opacity-0 transform-gpu"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div className="hr-shade absolute inset-0 bg-void/80" />
         <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-void/60" />

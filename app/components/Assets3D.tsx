@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { ArrowLeft, Expand, Images, X } from "lucide-react";
-import { gsap, isReducedMotion } from "../lib/anim";
+import { gsap, isReducedMotion, lockPageScroll, unlockPageScroll } from "../lib/anim";
 
 type GalleryItem = {
   src: string;
@@ -56,8 +57,6 @@ const galleryGroups: GalleryGroup[] = [
   },
 ];
 
-const marqueeItems = galleryGroups.flatMap((g) => g.items.map((i) => ({ ...i, group: g.en })));
-
 type LightboxState = { src: string; alt: string; group: string };
 
 export default function Assets3D() {
@@ -71,11 +70,16 @@ export default function Assets3D() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeLightbox();
     };
-    document.body.style.overflow = "hidden";
+    lockPageScroll();
+    const blockScroll = (e: Event) => e.preventDefault();
     window.addEventListener("keydown", onKey);
+    window.addEventListener("wheel", blockScroll, { passive: false });
+    window.addEventListener("touchmove", blockScroll, { passive: false });
     return () => {
-      document.body.style.overflow = "";
       window.removeEventListener("keydown", onKey);
+      window.removeEventListener("wheel", blockScroll);
+      window.removeEventListener("touchmove", blockScroll);
+      unlockPageScroll();
     };
   }, [lightbox, closeLightbox]);
 
@@ -91,7 +95,7 @@ export default function Assets3D() {
           opacity: 1,
           duration: 1.1,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".rg-head", start: "top 88%" },
+          scrollTrigger: { trigger: ".rg-head", start: "top 88%", once: true },
         },
       );
 
@@ -107,20 +111,9 @@ export default function Assets3D() {
             stagger: 0.09,
             ease: "power3.out",
             force3D: true,
-            scrollTrigger: { trigger: block, start: "top 86%" },
+            scrollTrigger: { trigger: block, start: "top 86%", once: true },
           },
         );
-      });
-
-      gsap.to(".rg-marquee-track", {
-        xPercent: -50,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".rg-marquee",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.2,
-        },
       });
     }, root);
 
@@ -189,34 +182,37 @@ export default function Assets3D() {
         </div>
       </div>
 
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md md:p-8"
-          role="dialog"
-          aria-modal
-          aria-label={lightbox.alt}
-          onClick={closeLightbox}
-        >
-          <button
-            type="button"
-            onClick={closeLightbox}
-            className="absolute left-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-bone transition hover:border-gold/50 hover:text-gold md:left-8 md:top-8"
-            aria-label="بستن"
-          >
-            <X size={20} />
-          </button>
-          <div
-            className="max-h-[85vh] max-w-6xl overflow-hidden rounded-2xl border border-white/15 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img src={lightbox.src} alt={lightbox.alt} className="max-h-[78vh] w-full object-contain bg-black" />
-            <div className="border-t border-white/10 bg-void/95 px-5 py-4 text-right">
-              <p className="text-sm font-semibold text-bone">{lightbox.alt}</p>
-              <p className="mt-1 font-grotesk text-[10px] tracking-[0.35em] text-gold/80">{lightbox.group}</p>
-            </div>
-          </div>
-        </div>
-      )}
+      {lightbox
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-[120] flex touch-none overscroll-none items-center justify-center bg-black/90 p-4 backdrop-blur-md md:p-8"
+              role="dialog"
+              aria-modal
+              aria-label={lightbox.alt}
+              onClick={closeLightbox}
+            >
+              <button
+                type="button"
+                onClick={closeLightbox}
+                className="absolute left-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-bone transition hover:border-gold/50 hover:text-gold md:left-8 md:top-8"
+                aria-label="بستن"
+              >
+                <X size={20} />
+              </button>
+              <div
+                className="max-h-[85vh] max-w-6xl overflow-hidden rounded-2xl border border-white/15 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img src={lightbox.src} alt={lightbox.alt} className="max-h-[78vh] w-full object-contain bg-black" />
+                <div className="border-t border-white/10 bg-void/95 px-5 py-4 text-right">
+                  <p className="text-sm font-semibold text-bone">{lightbox.alt}</p>
+                  <p className="mt-1 font-grotesk text-[10px] tracking-[0.35em] text-gold/80">{lightbox.group}</p>
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </section>
   );
 }
@@ -254,8 +250,9 @@ function GalleryCard({
       <img
         src={item.src}
         alt={item.alt}
-        className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.06]"
+        className="absolute inset-0 h-full w-full object-cover transform-gpu transition duration-700 ease-out group-hover:scale-[1.06]"
         loading="lazy"
+        decoding="async"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/10 transition duration-500 group-hover:from-black/95" />
       <div className="absolute inset-0 bg-gold/[0.07] opacity-0 transition duration-500 group-hover:opacity-100" />

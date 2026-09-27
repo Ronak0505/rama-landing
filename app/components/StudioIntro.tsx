@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { Gamepad2, Boxes, Clapperboard } from "lucide-react";
-import { gsap, isReducedMotion } from "../lib/anim";
+import { gsap, isReducedMotion, prefersScrollScrub } from "../lib/anim";
 
 const tags = [
   { icon: Gamepad2, fa: "بازی‌سازی" },
@@ -15,17 +15,6 @@ export default function StudioIntro() {
     if (!root.current || isReducedMotion()) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ".st-kicker",
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".st-kicker", start: "top 85%" },
-        },
-      );
-      gsap.fromTo(
         ".st-title",
         { y: 60, opacity: 0 },
         {
@@ -33,17 +22,7 @@ export default function StudioIntro() {
           opacity: 1,
           duration: 1.2,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".st-title", start: "top 85%" },
-        },
-      );
-      gsap.fromTo(
-        ".st-line",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          duration: 1.4,
-          ease: "power3.inOut",
-          scrollTrigger: { trigger: ".st-line", start: "top 88%" },
+          scrollTrigger: { trigger: ".st-title", start: "top 85%", once: true },
         },
       );
       gsap.fromTo(
@@ -55,7 +34,7 @@ export default function StudioIntro() {
           duration: 0.9,
           stagger: 0.08,
           ease: "power3.out",
-          scrollTrigger: { trigger: ".st-words", start: "top 85%" },
+          scrollTrigger: { trigger: ".st-words", start: "top 85%", once: true },
         },
       );
       gsap.fromTo(
@@ -68,10 +47,9 @@ export default function StudioIntro() {
           duration: 1,
           stagger: 0.15,
           ease: "power4.out",
-          scrollTrigger: { trigger: ".st-tags", start: "top 88%" },
+          scrollTrigger: { trigger: ".st-tags", start: "top 88%", once: true },
         },
       );
-      // image parallax + reveal
       gsap.fromTo(
         ".st-img-wrap",
         { clipPath: "inset(12% 8% 12% 8%)", opacity: 0.4 },
@@ -80,30 +58,32 @@ export default function StudioIntro() {
           opacity: 1,
           duration: 1.6,
           ease: "power3.out",
-          scrollTrigger: { trigger: ".st-img-wrap", start: "top 85%", end: "top 40%", scrub: 1 },
+          scrollTrigger: { trigger: ".st-img-wrap", start: "top 85%", toggleActions: "play none none none" },
         },
       );
-      gsap.fromTo(
-        ".st-img",
-        { yPercent: -10, scale: 1.15 },
-        {
-          yPercent: 10,
-          scale: 1.05,
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 1.2 },
-        },
-      );
-      gsap.to(".st-float", {
-        y: -30,
-        ease: "none",
-        scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 1.5 },
-      });
-      // big bg word drift
-      gsap.to(".st-bgword", {
-        xPercent: 12,
-        ease: "none",
-        scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 1 },
-      });
+
+      if (prefersScrollScrub()) {
+        gsap.set([".st-img", ".st-float", ".st-bgword"], { force3D: true });
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: root.current,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1,
+              fastScrollEnd: true,
+              invalidateOnRefresh: false,
+            },
+          })
+          .fromTo(
+            ".st-img",
+            { yPercent: -10, scale: 1.15 },
+            { yPercent: 10, scale: 1.05, ease: "none", duration: 1 },
+            0,
+          )
+          .fromTo(".st-float", { y: 0 }, { y: -30, ease: "none", duration: 1 }, 0)
+          .fromTo(".st-bgword", { xPercent: 0 }, { xPercent: 12, ease: "none", duration: 1 }, 0);
+      }
     }, root);
     return () => ctx.revert();
   }, []);
@@ -112,7 +92,7 @@ export default function StudioIntro() {
     <section ref={root} id="studio" className="relative overflow-hidden bg-void py-28 md:py-40">
       {/* giant background word */}
       <div
-        className="st-bgword pointer-events-none absolute top-10 left-0 select-none whitespace-nowrap font-bebas text-[22vw] leading-none text-white/[0.025]"
+        className="st-bgword pointer-events-none absolute top-10 left-0 select-none whitespace-nowrap font-bebas text-[22vw] leading-none text-white/[0.025] transform-gpu"
         dir="ltr"
       >
         RAMA • RAMA • RAMA
@@ -177,8 +157,9 @@ export default function StudioIntro() {
             <img
               src="/images/studio-hologram.jpg"
               alt="استودیو رما"
-              className="st-img h-[520px] w-full object-cover md:h-[640px]"
+              className="st-img h-[520px] w-full object-cover md:h-[640px] transform-gpu"
               loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-transparent to-void/20" />
             <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-7">

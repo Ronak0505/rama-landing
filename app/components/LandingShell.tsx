@@ -31,10 +31,10 @@ export default function LandingShell({ children, navbar = "studio" }: LandingShe
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const lenis = new Lenis({
-      duration: reduced ? 0 : 1.35,
+      duration: reduced ? 0 : 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: !reduced,
-      touchMultiplier: 1.6,
+      touchMultiplier: 1.4,
     });
     lenisRef.current = lenis;
     (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
@@ -42,7 +42,7 @@ export default function LandingShell({ children, navbar = "studio" }: LandingShe
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
 
     if (loading) lenis.stop();
     else lenis.start();
